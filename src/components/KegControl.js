@@ -38,9 +38,16 @@ class KegControl extends React.Component {
     this.setState({ selectedKeg: selectedKeg });
   };
 
-  handleSellPint = () => {
-    const updatePintAmount = this.state.selectedKeg["pintsLeft"] - 1;
-    this.setState({ selectedKeg: updatePintAmount });
+  handleSellPint = (id) => {
+    const selectedKeg = this.state.fullKegMenu.filter(
+      (keg) => keg.id === id
+    )[0];
+    if (selectedKeg.pintsLeft > 1) {
+      selectedKeg.pintsLeft -= 1;
+    } else {
+      selectedKeg.pintsLeft = "Out of Stock";
+    }
+    this.setState({ selectedKeg: selectedKeg });
   };
 
   render() {
@@ -48,8 +55,12 @@ class KegControl extends React.Component {
     let buttonText = null;
 
     if (this.state.selectedKeg != null) {
-      currentlyVisibleState = <KegDetail keg={this.state.selectedKeg} />;
-      <button onClick={this.handleSellPint}>Pint Sold</button>;
+      currentlyVisibleState = (
+        <KegDetail
+          keg={this.state.selectedKeg}
+          onNewPintsLeft={this.handleSellPint}
+        />
+      );
       buttonText = "Return to Keg Menu";
     } else if (this.state.formVisibleOnPage) {
       currentlyVisibleState = (
